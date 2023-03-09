@@ -1,0 +1,145 @@
+# FP
+
+#Iota
+Def iota = auxiota o [~1, id, ~<>]
+
+Def auxiota = (> o [1, 2] -> 3; auxiota o [+ o [1, ~1], 2, apndr o [3, 1]])
+
+
+#Ejercicio 1
+Def maximo = > -> 1;2
+
+Def maxSec = /maximo
+
+Def primAtom_aux = /(atom o 1 -> 1;2)
+
+Def primAtom = (atom -> id;~<>) o primAtom_aux
+
+
+#Ejercicio 2
+Def pertenece = /or o @eq o distl
+
+Def unComponente = eq o [~1,length]
+
+Def esPar = eq o [id, * o [~2, length o iota o % o [id, ~2]]]
+
+Def cantAtomos = +/ o @(atom -> ~1;~0)
+
+Def cantAtomPar = esPar o cantAtomos
+
+
+#Ejercicio 3
+Def concat = /apndl o apndr
+
+#Union
+Def agregarVacio = apndr o [id,~<>]
+
+Def agregar = pertenece -> 2; apndl
+
+Def er = /agregar o agregarVacio
+
+Def union = er o concat
+
+
+#Interseccion
+Def devolverPertenece = pertenece -> 1; ~<>
+
+Def insertarNoVacio = null o 1 -> 2; apndl
+
+Def eliminarVacio = /insertarNoVacio o agregarVacio
+
+Def interseccion = eliminarVacio o @devolverPertenece o distr
+
+
+#Diferencia
+Def devolverSiNoPertenece = pertenece -> ~<>; 1
+
+Def diferencia = eliminarVacio o @devolverSiNoPertenece o distr
+
+
+#Diferencia Simetrica
+Def diferenciaSimetrica = concat o [diferencia, diferencia o reverse]
+
+
+#Ejercicio 5
+Def invertir_sec_aux = (null o 1) -> 2; invertir_sec_aux o [tl o 1, apndl o [1 o 1, 2]]
+
+Def invertir_sec = invertir_sec_aux o [id, ~<>]
+
+#Ejercicio 7
+Def compCoincide = /or o @eq o trans
+
+#Ejercicio 8
+Def prodEscMatriz = @(@*) o @distl o distl
+
+#Ejercicio 9
+Def esPositivo = > o [id, ~0]
+
+Def elementosPositivos = eliminarVacio o @(esPositivo -> id; ~<>)
+
+
+Def colParAux = (esPar o 1 o 2) -> apndr o [3, 1 o 1]; 3
+
+Def colPar = (null o 2) -> 3; colPar o [tl o 1, tl o 2, colParAux o id]
+
+Def elemColPares = @(colPar o [id, iota o length, ~<>])
+
+Def sumarPositivosColPares = /+ o /concat o @elementosPositivos o elemColPares
+
+
+#Ejercicio 11
+Def vectorSuma = @+ o trans
+
+#Ejercicio 12
+Def iotaDoble = @iota o iota
+
+
+#Ejercicio 14
+Def devolver_invictos = er o diferencia o trans
+
+Def devolver_perdedores = er o diferencia o reverse o trans
+
+
+Def listaEquip = union o trans
+
+Def transformar = eq -> ~1; ~0
+
+Def contar = /+ o @transformar o distl
+
+Def armarAmbiente = [listaEquip, trans]
+
+Def generarTrios = [1, contar o [1, 1 o 2], contar o [1, 2 o 2]]
+
+Def contarResultados = @generarTrios o distr o armarAmbiente
+
+Def filtrarMasGanador = > o [2,3] -> 1; ~<>
+Def filtrarMasPerdedor = < o [2,3] -> 1; ~<>
+Def filtrarGanoYPerdioIgual = eq o [2,3] -> 1; ~<>
+
+Def masGanadorQuePerdedor = eliminarVacio o @filtrarMasGanador o contarResultados
+Def masPerdedorQueGanador = eliminarVacio o @filtrarMasPerdedor o contarResultados
+Def igualPerdedorQueGanador = eliminarVacio o @filtrarGanoYPerdioIgual o contarResultados
+
+
+
+#Ejercicio 10
+Def selector = 2 o 1r o trans o [iota o 1, 2]
+
+Def selectorIzq = selector o [2,selector o [1,3]] o apndr
+
+
+
+#Ejercicio Parcial
+
+Def isTrue = eq o [~T,id]
+
+Def transform = isTrue -> ~1;~0
+
+Def masTrues = > o [id,~1]
+
+Def indice = isTrue o 2 -> 1; ~<>
+
+
+< <T T F> <T T T> <T F F> <F F F> >
+
+Def devolverIndices = eliminarVacio o @indice o trans o [iota o length, id] o @masTrues o @(/+) o @(@transform)
